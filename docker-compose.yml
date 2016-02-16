@@ -6,12 +6,14 @@ services:
       context: ./cache1
       args:
         DOCKER_HOST: $DOCKER_HOST
+    ports:
+      - "80:8080"
   cache2:
     build:
       context: ./cache2
       args:
         DOCKER_HOST: $DOCKER_HOST
     ports:
-      - "80:8080"
+      - "8080:8080"
   origin:
     build: ./origin
