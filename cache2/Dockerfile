@@ -13,4 +13,4 @@ RUN host_ip=$DOCKER_HOST \
  && echo host_ip=$host_ip \
  && sed 's/\${host_ip}/'$host_ip'/' /etc/trafficserver/remap.config.tmpl > /etc/trafficserver/remap.config
 
-CMD ["/opt/trafficserver/bin/traffic_server"]
+CMD ["/opt/trafficserver/bin/traffic_cop"]
