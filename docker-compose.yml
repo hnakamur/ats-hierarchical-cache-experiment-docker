@@ -1,19 +1,12 @@
 ---
 version: '2'
 services:
-  cache1:
+  cache:
     build:
-      context: ./cache1
+      context: ./cache
       args:
         DOCKER_HOST: $DOCKER_HOST
     ports:
-      - "80:8080"
-  cache2:
-    build:
-      context: ./cache2
-      args:
-        DOCKER_HOST: $DOCKER_HOST
-    ports:
-      - "8080:8080"
+      - "80:80"
   origin:
     build: ./origin
