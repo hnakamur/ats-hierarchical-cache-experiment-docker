@@ -2,6 +2,12 @@ FROM centos:7
 
 ARG DOCKER_HOST
 
+
+RUN yum install -y epel-release
+
+RUN curl -sL -o /etc/yum.repos.d/hnakamur-nginx.repo https://copr.fedoraproject.org/coprs/hnakamur/nginx/repo/epel-7/hnakamur-nginx-epel-7.repo \
+ && yum install -y nginx
+
 RUN curl -sL -o /etc/yum.repos.d/hnakamur-apache-traffic-server-6.repo https://copr.fedoraproject.org/coprs/hnakamur/apache-traffic-server-6/repo/epel-7/hnakamur-apache-traffic-server-6-epel-7.repo \
  && yum install -y trafficserver
 
@@ -32,11 +38,15 @@ RUN cp -pr /etc/trafficserver /etc/trafficserver-second \
  && ln -s /var/log/trafficserver-second /opt/trafficserver-second/var/logs \
  && ln -s /var/run/trafficserver-second /opt/trafficserver-second/var/run
  
+ADD nginx/ /etc/nginx/
 ADD trafficserver-first/ /etc/trafficserver-first/
 ADD trafficserver-second/ /etc/trafficserver-second/
 ADD supervisor/supervisord.conf /etc/
+ADD supervisor/nginx.conf /etc/supervisor.d/
 ADD supervisor/trafficserver-first.conf /etc/supervisor.d/
 ADD supervisor/trafficserver-second.conf /etc/supervisor.d/
+ADD startup.sh /usr/local/sbin/
+RUN chmod +x /usr/local/sbin/startup.sh
 
 RUN host_ip=$DOCKER_HOST \
  && host_ip=${host_ip#tcp://} \
@@ -46,4 +56,4 @@ RUN host_ip=$DOCKER_HOST \
  && sed 's/\${host_ip}/'$host_ip'/' /etc/trafficserver-first/parent.config.tmpl > /etc/trafficserver-first/parent.config \
  && sed 's/\${host_ip}/'$host_ip'/' /etc/trafficserver-second/remap.config.tmpl > /etc/trafficserver-second/remap.config
 
-CMD ["/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/local/sbin/startup.sh"]

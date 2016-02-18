@@ -8,5 +8,6 @@ services:
         DOCKER_HOST: $DOCKER_HOST
     ports:
       - "80:80"
+    privileged: true
   origin:
     build: ./origin
